@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Havro — Remember Every Promise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Text:ital@0;1&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            background-color: #0e1018;
+            color: #d4cfc6;
+            line-height: 1.6;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-color: rgba(42, 47, 55, 0.1);
+            z-index: 0;
+            animation: parallax 20s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(14, 16, 24, 0.2), rgba(14, 16, 24, 0.6), #0e1018);
+            z-index: 10;
+        }
+
+        @keyframes parallax {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 20;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-label {
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #8fa68a;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out 0.1s both;
+        }
+
+        .hero-title {
+            font-family: 'DM Serif Text', serif;
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            color: #d4cfc6;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            color: #6b6560;
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: #a67c6e;
+            color: #f0ede8;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            font-family: 'Lora', serif;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(166, 124, 110, 0.3);
+        }
+
+        .cta-button:active {
+            transform: scale(0.95);
+        }
+
+        .counter {
+            font-size: 0.9rem;
+            color: #8fa68a;
+            font-style: italic;
+            margin-top: 1.5rem;
+            animation: fadeInUp 1s ease-out 0.5s both;
+            animation-name: pulse-fade;
+        }
+
+        @keyframes pulse-fade {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        .scroll-indicator svg {
+            width: 1.5rem;
+            height: 1.5rem;
+            color: #8fa68a;
+        }
+
+        /* ===== QUOTE SECTION ===== */
+        .quote-section {
+            padding: 5rem 2rem;
+            background-color: #0e1018;
+            position: relative;
+        }
+
+        .quote-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+
+
+        blockquote {
+            text-align: center;
+        }
+
+        .quote-text {
+            font-family: 'Lora', serif;
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
+            color: #d4cfc6;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .quote-attribution {
+            font-size: 0.95rem;
+            color: #8fa68a;
+            font-style: italic;
+        }
+
+        /* ===== HOW IT WORKS SECTION ===== */
+        .how-it-works {
+            padding: 5rem 2rem;
+            background-color: #0e1018;
+        }
+
+        .section-label {
+            text-align: center;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #8fa68a;
+            margin-bottom: 4rem;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .step {
+            position: relative;
+            text-align: center;
+        }
+
+        .step-number {
+            position: absolute;
+            top: -2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'DM Serif Text', serif;
+            font-size: 2rem;
+            color: #a67c6e;
+            font-style: italic;
+            font-weight: 400;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .step:hover .step-number {
+            transform: translateX(-50%) scale(1.15);
+            color: #d4cfc6;
+        }
+
+        .step-title {
+            font-family: 'DM Serif Text', serif;
+            font-size: 1.2rem;
+            color: #d4cfc6;
+            margin: 3rem 0 1rem;
+            font-weight: 400;
+        }
+
+        .step-description {
+            font-size: 0.95rem;
+            color: #6b6560;
+            line-height: 1.6;
+        }
+
+        /* ===== FEATURES SECTION ===== */
+        .features-section {
+            padding: 5rem 2rem;
+            background-color: #0e1018;
+        }
+
+        .section-title {
+            font-family: 'DM Serif Text', serif;
+            font-size: clamp(2rem, 5vw, 2.5rem);
+            color: #d4cfc6;
+            text-align: center;
+            margin-bottom: 4rem;
+            font-weight: 400;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-emoji {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .feature:hover .feature-emoji {
+            transform: scale(1.2);
+        }
+
+        .feature-title {
+            font-family: 'DM Serif Text', serif;
+            font-size: 1.1rem;
+            color: #d4cfc6;
+            margin-bottom: 0.75rem;
+            font-weight: 400;
+        }
+
+        .feature-description {
+            font-size: 0.95rem;
+            color: #6b6560;
+            line-height: 1.6;
+        }
+
+        /* ===== CTA SECTION ===== */
+        .cta-section {
+            padding: 5rem 2rem;
+            background-color: #0e1018;
+            text-align: center;
+        }
+
+        .cta-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .cta-subtitle {
+            font-size: 1.1rem;
+            color: #6b6560;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            padding: 3rem 2rem;
+            border-top: 1px solid #2a2f37;
+            text-align: center;
+            background-color: #0e1018;
+        }
+
+        .footer-text {
+            font-size: 0.7rem;
+            color: #6b6560;
+            letter-spacing: 0.05em;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero-content {
+                padding: 1rem;
+            }
+
+            .steps-grid {
+                gap: 2rem;
+            }
+
+            .step-number {
+                width: 3.5rem;
+                height: 3.5rem;
+                font-size: 1.2rem;
+            }
+
+            .step-title {
+                margin: 2.5rem 0 0.75rem;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero">
+        <div class="hero-content">
+            <p class="hero-label">Private beta — coming soon</p>
+            <h1 class="hero-title">The one who never forgets</h1>
+            <p class="hero-subtitle">Havro holds every promise you made to yourself. Every struggle. Every moment you almost gave up — and kept going. Witnessed. Remembered. Never judged.</p>
+            <a href="mailto:hello@havro.app" class="cta-button">Join Waitlist</a>
+            <p class="counter">143 people already waiting</p>
+        </div>
+        <div class="scroll-indicator">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- ===== QUOTE SECTION ===== -->
+    <section class="quote-section">
+        <div class="quote-container">
+
+            <blockquote>
+                <p class="quote-text">"The heaviest thing a person carries is a promise they made to themselves — and forgot."</p>
+                <p class="quote-attribution">— The reason Havro exists</p>
+            </blockquote>
+        </div>
+    </section>
+
+    <!-- ===== HOW IT WORKS SECTION ===== -->
+    <section class="how-it-works">
+        <p class="section-label">How it works</p>
+        <div class="steps-grid">
+            <div class="step">
+                <div class="step-number">i</div>
+                <h3 class="step-title">Tell Havro your story</h3>
+                <p class="step-description">No forms. No judgement. Just a conversation in whatever language you think in. Share what you carry. Havro listens without flinching.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">ii</div>
+                <h3 class="step-title">Havro holds it</h3>
+                <p class="step-description">Every word stays. Every promise kept by Havro — even when you cannot keep it yourself. Months later it reflects your own words back exactly when you need them.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">iii</div>
+                <h3 class="step-title">Watch yourself become</h3>
+                <p class="step-description">Not a dashboard. Not a streak counter. Havro tracks the arc of who you are becoming and witnesses it without judgement.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FEATURES SECTION ===== -->
+    <section class="features-section">
+        <h2 class="section-title">What makes Havro different</h2>
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-emoji">🌙</div>
+                <h3 class="feature-title">3AM available</h3>
+                <p class="feature-description">When the weight is heaviest, Havro is there. No appointments. No closing hours.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-emoji">🔒</div>
+                <h3 class="feature-title">Completely private</h3>
+                <p class="feature-description">No social feeds. No public profiles. What you tell Havro stays with Havro.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-emoji">🗣</div>
+                <h3 class="feature-title">Your language</h3>
+                <p class="feature-description">English, اردو, العربية. Havro understands you in the language you actually think in.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-emoji">📜</div>
+                <h3 class="feature-title">Long memory</h3>
+                <p class="feature-description">What you said six months ago. The promise from last year. Havro remembers.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CTA SECTION ===== -->
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2 class="section-title">Be the first to meet Havro</h2>
+            <p class="cta-subtitle">Join the waitlist. No noise. Just a message when your Havro is ready.</p>
+            <a href="mailto:hello@havro.app" class="cta-button">Join Waitlist</a>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+        <p class="footer-text">© 2026 Havro · hello@havro.app</p>
+    </footer>
+
+    <script>
+        // Smooth scroll parallax effect on hero background
+        window.addEventListener('scroll', () => {
+            const hero = document.querySelector('.hero');
+            if (hero) {
+                const scrollY = window.scrollY;
+                hero.style.setProperty('--scroll', scrollY + 'px');
+            }
+        });
+
+        // Fade in scroll indicator as you scroll down
+        window.addEventListener('scroll', () => {
+            const indicator = document.querySelector('.scroll-indicator');
+            if (indicator) {
+                const opacity = Math.max(0, 1 - window.scrollY / 300);
+                indicator.style.opacity = opacity;
+            }
+        });
+    </script>
+</body>
+</html>
