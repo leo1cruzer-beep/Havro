@@ -269,7 +269,7 @@
 
       <div id="form-hero">
         <div class="form-wrap">
-          <input type="email" id="email-hero" placeholder="your@email.com" autocomplete="email" />
+          <input type="email" id="email-hero" name="email" placeholder="your@email.com" autocomplete="email" />
           <button class="btn" onclick="submitForm('hero')">Join Waitlist</button>
         </div>
         <p class="form-error" id="error-hero"></p>
@@ -422,7 +422,7 @@
 
       <div id="form-cta">
         <div class="form-wrap" style="justify-content: center;">
-          <input type="email" id="email-cta" placeholder="your@email.com" autocomplete="email" />
+          <input type="email" id="email-cta" name="email" placeholder="your@email.com" autocomplete="email" />
           <button class="btn" onclick="submitForm('cta')">Join Waitlist</button>
         </div>
         <p class="form-error" id="error-cta"></p>
@@ -543,7 +543,7 @@
     btn.disabled = true;
     btn.textContent = 'Joining…';
 
-    fetch('/api/waitlist', {
+    fetch('https://formspree.io/f/meewbjoe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email }),
