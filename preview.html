@@ -634,11 +634,11 @@
 <div class="bottom-cta">
   <h2 class="cta-title">Ready when you are.</h2>
   <p class="cta-sub">Join the waitlist. No spam. Just a quiet message when Havro is ready.</p>
-  <form class="cta-form" onsubmit="submitForm(event)">
-    <input type="email" id="cta-email" class="cta-input" placeholder="your@email.com" required />
+  <form class="cta-form" action="https://formspree.io/f/meewbjoe" method="POST">
+    <input type="email" name="email" class="cta-input" placeholder="your@email.com" required />
     <button type="submit" class="cta-btn">Join Waitlist</button>
   </form>
-  <div class="cta-success" id="cta-success">You're on the list. Havro will remember. 🌙</div>
+  
   <p class="cta-note">Or go back to <a href="/" style="color:var(--accent)">havro.app</a></p>
 </div>
 
@@ -647,13 +647,6 @@
   <a href="mailto:hello@havro.app">hello@havro.app</a>
 </footer>
 
-<script>
-function submitForm(e) {
-  e.preventDefault();
-  document.querySelector('.cta-form').style.display = 'none';
-  document.getElementById('cta-success').style.display = 'block';
-}
-</script>
 
 </body>
 </html>
