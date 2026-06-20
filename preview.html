@@ -634,28 +634,58 @@
 <div class="bottom-cta">
   <h2 class="cta-title">Ready when you are.</h2>
   <p class="cta-sub">Join the waitlist. No spam. Just a quiet message when Havro is ready.</p>
-  <form class="cta-form" id="waitlist-form">
-    <input type="email" id="waitlist-email" class="cta-input" placeholder="your@email.com" required />
-    <button type="submit" class="cta-btn" id="waitlist-btn">Join Waitlist</button>
-  </form>
-  <p id="cta-success" style="display:none; color:#c4956a; font-style:italic; font-size:0.9rem;">You're on the list. Havro will remember. 🌙</p>
+  <div id="form-preview">
+    <div class="cta-form">
+      <input type="email" id="email-preview" class="cta-input" placeholder="your@email.com" autocomplete="email" />
+      <button class="cta-btn" onclick="submitPreviewForm()">Join Waitlist</button>
+    </div>
+    <p id="error-preview" style="display:none; color:#c4956a; font-size:0.78rem; margin-top:10px; text-align:center;"></p>
+  </div>
+  <p id="success-preview" style="display:none; color:#8fa68a; font-size:0.95rem; font-style:italic; padding:16px 0;">You're on the list. Havro will remember. 🌙</p>
+
   <script>
-    document.getElementById('waitlist-form').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const email = document.getElementById('waitlist-email').value;
-      const btn = document.getElementById('waitlist-btn');
-      btn.textContent = '...';
-      btn.disabled = true;
-      try {
-        await fetch('https://formspree.io/f/xlgkqznr', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({ email: email })
-        });
-      } catch(err) {}
-      document.getElementById('waitlist-form').style.display = 'none';
-      document.getElementById('cta-success').style.display = 'block';
+  function submitPreviewForm() {
+    const input = document.getElementById('email-preview');
+    const errorEl = document.getElementById('error-preview');
+    const successEl = document.getElementById('success-preview');
+    const formEl = document.getElementById('form-preview');
+    const btn = formEl.querySelector('.cta-btn');
+
+    const email = input.value.trim();
+    errorEl.style.display = 'none';
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      errorEl.textContent = 'Please enter a valid email address.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Joining…';
+
+    fetch('https://formspree.io/f/xlgkqznr', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    })
+    .then(r => r.json().then(d => ({ ok: r.ok || r.status === 200, data: d })))
+    .then(({ ok, data }) => {
+      if (ok) {
+        formEl.style.display = 'none';
+        successEl.style.display = 'block';
+      } else {
+        errorEl.textContent = data.error || 'Something went wrong. Please try again.';
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Join Waitlist';
+      }
+    })
+    .catch(() => {
+      window.location.href = 'mailto:hello@havro.app?subject=Waitlist&body=Please add me: ' + encodeURIComponent(email);
+      btn.disabled = false;
+      btn.textContent = 'Join Waitlist';
     });
+  }
   </script>
   
   <p class="cta-note">Or go back to <a href="/" style="color:var(--accent)">havro.app</a></p>
