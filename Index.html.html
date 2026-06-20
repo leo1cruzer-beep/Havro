@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Havro — Preview</title>
+<meta name="description" content="See Havro in action. Six screens. One quiet companion that remembers everything." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #0e1018;
+    --surface: #131720;
+    --card:    #161b27;
+    --text:    #e8e0d0;
+    --muted:   #7a7068;
+    --accent:  #c4956a;
+    --mauve:   #9e7b7b;
+    --sage:    #8fa68a;
+    --border:  rgba(196,149,106,0.15);
+    --serif:   'DM Serif Display', Georgia, serif;
+    --body:    'Lora', Georgia, serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(14,16,24,0.98), transparent);
+  }
+
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+  }
+
+  .nav-back {
+    border: 1px solid rgba(196,149,106,0.3);
+    color: var(--muted);
+    padding: 7px 18px;
+    border-radius: 24px;
+    font-family: var(--body);
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .nav-back:hover { color: var(--accent); border-color: rgba(196,149,106,0.5); }
+
+  .hero {
+    padding: 120px 24px 60px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .hero-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.8;
+  }
+
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    color: var(--text);
+    line-height: 1.15;
+  }
+
+  .hero-sub {
+    color: var(--muted);
+    font-style: italic;
+    font-size: 1rem;
+    line-height: 1.7;
+    max-width: 480px;
+  }
+
+  /* ── PHONES ── */
+  .phones-wrap {
+    padding: 40px 24px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 60px;
+  }
+
+  .phone-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 32px;
+  }
+
+  .phone-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .phone-label {
+    font-size: 10px;
+    letter-spacing: 1.8px;
+    color: var(--muted);
+    text-transform: uppercase;
+    font-family: var(--body);
+  }
+
+  .phone {
+    width: 260px;
+    height: 540px;
+    background: var(--bg);
+    border-radius: 38px;
+    border: 1.5px solid rgba(196,149,106,0.25);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(0,0,0,0.4) inset;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 80px; height: 22px;
+    background: #0a0c12;
+    border-radius: 0 0 14px 14px;
+    z-index: 10;
+  }
+
+  /* Ink ripples */
+  .ripples { position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:0; }
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(196,149,106,0.18) 0%, rgba(196,149,106,0) 70%);
+    animation: inkPulse 6s ease-in-out infinite;
+    opacity: 0;
+  }
+  .r1{width:200px;height:200px;left:-40px;top:40px;animation-delay:0s;}
+  .r2{width:160px;height:160px;right:-10px;top:140px;animation-delay:2s;}
+  .r3{width:220px;height:220px;left:10px;bottom:60px;animation-delay:1s;}
+  .r4{width:140px;height:140px;right:10px;bottom:40px;animation-delay:3s;}
+  @keyframes inkPulse{0%{opacity:0;transform:scale(0.2);}30%{opacity:1;}80%{opacity:0.3;}100%{opacity:0;transform:scale(1.1);}}
+
+  /* Screen: Welcome */
+  .welcome-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px 20px;text-align:center;gap:10px;position:relative;z-index:1;}
+  .welcome-line{font-family:var(--serif);font-size:19px;color:var(--text);line-height:1.4;animation:fadeUp 0.6s ease both;}
+  .welcome-line:nth-child(2){animation-delay:0.4s;font-size:14px;color:var(--muted);font-family:var(--body);font-style:italic;}
+  .welcome-line:nth-child(3){animation-delay:0.8s;font-size:14px;color:var(--muted);font-family:var(--body);}
+  .welcome-line:nth-child(4){animation-delay:1.2s;font-size:14px;color:var(--muted);font-family:var(--body);}
+  .cursor{color:var(--accent);animation:blink 1s step-end infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .begin-btn{margin-top:24px;border:1px solid var(--accent);border-radius:28px;padding:11px 34px;color:var(--accent);font-family:var(--serif);font-size:15px;background:transparent;cursor:pointer;letter-spacing:0.5px;animation:fadeUp 0.6s ease 1.8s both;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  /* Screen: Conversation */
+  .screen-header{padding:34px 16px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;position:relative;z-index:1;background:rgba(14,16,24,0.6);backdrop-filter:blur(6px);}
+  .moon-icon{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;}
+  .screen-title{font-family:var(--serif);font-size:17px;color:var(--text);}
+  .messages{flex:1;padding:14px 12px;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;overflow:hidden;position:relative;z-index:1;}
+  .msg{max-width:82%;padding:10px 13px;border-radius:12px;font-size:12px;line-height:1.6;font-family:var(--body);color:var(--text);animation:fadeUp 0.4s ease both;}
+  .msg-havro{background:rgba(22,27,39,0.85);align-self:flex-start;border-top-left-radius:3px;border-left:2px solid var(--accent);padding-left:11px;backdrop-filter:blur(4px);}
+  .msg-user{background:rgba(19,23,32,0.85);align-self:flex-end;border-top-right-radius:3px;backdrop-filter:blur(4px);}
+  .msg-time{font-size:9px;color:var(--muted);margin-top:4px;display:block;}
+  .input-bar{padding:8px 12px 14px;border-top:1px solid var(--border);background:var(--surface);display:flex;gap:8px;align-items:center;position:relative;z-index:1;}
+  .input-field{flex:1;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:8px 13px;color:var(--muted);font-size:12px;font-family:var(--body);font-style:italic;}
+  .send-btn{width:32px;height:32px;border-radius:50%;background:var(--accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:12px;}
+
+  /* Screen: Journey */
+  .journey-header{padding:34px 16px 12px;border-bottom:1px solid var(--border);}
+  .screen-h1{font-family:var(--serif);font-size:21px;color:var(--text);margin-bottom:3px;}
+  .screen-sub{font-size:10px;color:var(--muted);letter-spacing:0.3px;font-family:var(--body);margin-bottom:10px;}
+  .filter-row{display:flex;gap:5px;flex-wrap:nowrap;overflow:hidden;}
+  .filter-chip{border:1px solid var(--border);border-radius:16px;padding:3px 9px;font-size:10px;color:var(--muted);font-family:var(--body);white-space:nowrap;}
+  .filter-chip.active{border-color:var(--accent);color:var(--accent);background:rgba(196,149,106,0.08);}
+  .memory-list{padding:10px;display:flex;flex-direction:column;gap:8px;overflow:hidden;flex:1;}
+  .memory-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px;}
+  .mc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  .mc-badge{border:1px solid var(--accent);border-radius:4px;padding:2px 6px;font-size:8px;letter-spacing:1.2px;color:var(--accent);font-family:var(--body);}
+  .mc-badge.fear{border-color:var(--mauve);color:var(--mauve);}
+  .mc-badge.goal{border-color:var(--sage);color:var(--sage);}
+  .mc-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);}
+  .mc-dot.scared{background:var(--mauve);}
+  .mc-text{font-size:11px;line-height:1.6;color:var(--text);font-family:var(--body);margin-bottom:5px;}
+  .mc-date{font-size:9px;color:var(--muted);font-family:var(--body);}
+
+  /* Screen: Promises */
+  .promises-header{padding:34px 16px 12px;border-bottom:1px solid var(--border);}
+  .stats-row{display:flex;align-items:center;gap:0;margin-top:8px;}
+  .stat{flex:1;text-align:center;}
+  .stat-num{font-family:var(--serif);font-size:24px;color:var(--accent);line-height:1;}
+  .stat-num.sage{color:var(--sage);}
+  .stat-num.dim{color:var(--text);}
+  .stat-label{font-size:8px;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;font-family:var(--body);margin-top:2px;}
+  .stat-div{width:1px;height:28px;background:var(--border);}
+  .promise-list{padding:10px;display:flex;flex-direction:column;gap:8px;flex:1;overflow:hidden;}
+  .promise-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px;}
+  .pc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  .pc-status{border:1px solid var(--accent);border-radius:4px;padding:2px 6px;font-size:8px;letter-spacing:1.2px;color:var(--accent);font-family:var(--body);}
+  .pc-status.kept{border-color:var(--sage);color:var(--sage);}
+  .pc-days{font-size:9px;color:var(--muted);font-family:var(--body);}
+  .pc-text{font-size:11px;line-height:1.6;color:var(--text);font-family:var(--body);margin-bottom:5px;}
+  .pc-date{font-size:9px;color:var(--muted);font-family:var(--body);margin-bottom:8px;}
+  .pc-btns{display:flex;gap:6px;}
+  .pc-btn{flex:1;border:1px solid var(--sage);border-radius:6px;padding:6px 4px;text-align:center;font-size:10px;color:var(--sage);font-family:var(--body);cursor:pointer;background:transparent;}
+  .pc-btn.abandon{border-color:var(--border);color:var(--muted);}
+
+  /* Screen: Reflection */
+  .reflection-header{padding:34px 16px 12px;border-bottom:1px solid var(--border);}
+  .reflection-period{font-size:10px;color:var(--accent);letter-spacing:1px;text-transform:uppercase;font-family:var(--body);margin-bottom:2px;}
+  .reflection-list{padding:10px;display:flex;flex-direction:column;gap:8px;flex:1;overflow:hidden;}
+  .reflection-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;}
+  .reflection-card.insight{border-color:rgba(196,149,106,0.35);background:linear-gradient(135deg,rgba(196,149,106,0.06) 0%,var(--card) 60%);}
+  .reflection-card-label{font-size:8px;letter-spacing:1.4px;color:var(--muted);text-transform:uppercase;font-family:var(--body);margin-bottom:6px;}
+  .reflection-card.insight .reflection-card-label{color:var(--accent);}
+  .reflection-text{font-size:11px;line-height:1.7;color:var(--text);font-family:var(--body);font-style:italic;}
+  .reflection-text em{color:var(--accent);font-style:normal;}
+  .milestone-row{display:flex;align-items:center;gap:10px;}
+  .milestone-num{font-family:var(--serif);font-size:28px;color:var(--sage);line-height:1;flex-shrink:0;}
+  .milestone-label{font-size:11px;color:var(--text);font-family:var(--body);line-height:1.4;}
+  .milestone-sub{font-size:9px;color:var(--muted);font-family:var(--body);margin-top:2px;}
+  .mood-row{display:flex;gap:4px;align-items:flex-end;height:36px;margin-top:8px;}
+  .mood-bar{flex:1;border-radius:3px 3px 0 0;background:rgba(196,149,106,0.2);}
+  .mood-bar.high{background:rgba(143,166,138,0.5);}
+  .mood-bar.med{background:rgba(196,149,106,0.35);}
+  .mood-days{display:flex;gap:4px;margin-top:4px;}
+  .mood-day{flex:1;text-align:center;font-size:8px;color:var(--muted);font-family:var(--body);}
+
+  /* Screen: Settings */
+  .settings-header{padding:34px 16px 12px;border-bottom:1px solid var(--border);}
+  .settings-list{padding:10px;display:flex;flex-direction:column;gap:6px;flex:1;overflow:hidden;}
+  .settings-section-label{font-size:8px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;font-family:var(--body);margin:6px 2px 4px;}
+  .settings-row{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .settings-row-label{font-size:11px;color:var(--text);font-family:var(--body);}
+  .settings-row-sub{font-size:9px;color:var(--muted);font-family:var(--body);margin-top:1px;}
+  .settings-row-info{flex:1;}
+  .toggle{width:30px;height:16px;border-radius:8px;background:var(--accent);position:relative;flex-shrink:0;}
+  .toggle::after{content:'';position:absolute;width:12px;height:12px;border-radius:50%;background:#fff;top:2px;right:2px;}
+  .toggle.off{background:var(--border);}
+  .toggle.off::after{right:auto;left:2px;}
+  .api-key-display{font-size:10px;color:var(--muted);font-family:monospace;letter-spacing:1px;}
+  .settings-row.danger .settings-row-label{color:var(--mauve);}
+  .chevron{font-size:10px;color:var(--muted);flex-shrink:0;}
+
+  /* Tab bar */
+  .tab-bar{display:flex;border-top:1px solid var(--border);background:var(--surface);padding:8px 0 14px;position:relative;z-index:2;}
+  .tab-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;padding:2px 0;opacity:0.38;color:var(--muted);transition:opacity 0.2s;}
+  .tab-item.active{opacity:1;color:var(--accent);}
+  .tab-icon{font-size:16px;}
+  .tab-text{font-size:8px;letter-spacing:0.3px;font-family:var(--body);color:inherit;line-height:1;}
+  .tab-item.active .tab-text{color:var(--accent);}
+
+  /* Screen description */
+  .screen-desc {
+    max-width: 260px;
+    text-align: center;
+  }
+  .screen-desc-title {
+    font-family: var(--serif);
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .screen-desc-body {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  /* CTA */
+  .bottom-cta {
+    padding: 60px 24px 80px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .cta-title { font-family:var(--serif); font-size:clamp(1.6rem,3vw,2.4rem); color:var(--text); }
+  .cta-sub { color:var(--muted); font-style:italic; font-size:0.9rem; max-width:380px; line-height:1.7; }
+  .cta-form { display:flex; gap:10px; max-width:400px; width:100%; }
+  .cta-input { flex:1; background:rgba(240,234,216,0.05); border:1px solid var(--border); color:var(--text); padding:13px 18px; border-radius:4px; font-family:var(--body); font-size:0.88rem; outline:none; }
+  .cta-input:focus { border-color:rgba(196,149,106,0.4); }
+  .cta-input::placeholder { color:var(--muted); }
+  .cta-btn { background:var(--accent); color:var(--bg); border:none; padding:13px 22px; border-radius:4px; font-family:var(--body); font-size:0.84rem; font-weight:600; cursor:pointer; white-space:nowrap; transition:opacity 0.2s; }
+  .cta-btn:hover { opacity:0.85; }
+  .cta-success { display:none; color:var(--accent); font-style:italic; font-size:0.9rem; }
+  .cta-note { font-size:0.72rem; color:var(--muted); font-style:italic; }
+
+  footer { border-top:1px solid rgba(255,255,255,0.05); padding:24px 32px; display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:var(--muted); }
+  footer a { color:var(--muted); text-decoration:none; }
+  footer a:hover { color:var(--accent); }
+
+  @media (max-width: 600px) {
+    .phone-row { flex-direction:column; align-items:center; }
+    .cta-form { flex-direction:column; }
+    nav { padding:16px 20px; }
+    footer { flex-direction:column; gap:8px; text-align:center; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Havro</a>
+  <a href="/" class="nav-back">← Back</a>
+</nav>
+
+<div class="hero">
+  <p class="hero-label">Interactive Preview</p>
+  <h1 class="hero-title">Six screens.<br/>One quiet companion.</h1>
+  <p class="hero-sub">This is what Havro looks like. Scroll through each screen and feel how it works.</p>
+</div>
+
+<div class="phones-wrap">
+
+  <!-- Row 1: Welcome + Conversation -->
+  <div class="phone-row">
+
+    <div class="phone-wrap">
+      <span class="phone-label">Welcome</span>
+      <div class="phone">
+        <div class="ripples">
+          <div class="ripple r1"></div>
+          <div class="ripple r2"></div>
+          <div class="ripple r3"></div>
+        </div>
+        <div class="welcome-screen">
+          <span class="welcome-line">Havro remembers.<span class="cursor">|</span></span>
+          <span class="welcome-line">Every promise you made to yourself.</span>
+          <span class="welcome-line">Every struggle. Every moment you almost gave up.</span>
+          <span class="welcome-line">Witnessed. Remembered. Never judged.</span>
+          <button class="begin-btn">Begin</button>
+        </div>
+      </div>
+      <div class="screen-desc">
+        <p class="screen-desc-title">First impression</p>
+        <p class="screen-desc-body">Slow typewriter reveal. No login. No form. Just the beginning of something honest.</p>
+      </div>
+    </div>
+
+    <div class="phone-wrap">
+      <span class="phone-label">Conversation</span>
+      <div class="phone">
+        <div class="ripples">
+          <div class="ripple r1" style="animation-delay:0.3s"></div>
+          <div class="ripple r2" style="animation-delay:2.5s"></div>
+          <div class="ripple r3" style="animation-delay:1.2s"></div>
+          <div class="ripple r4" style="animation-delay:3.8s"></div>
+        </div>
+        <div class="screen-header">
+          <div class="moon-icon">🌙</div>
+          <span class="screen-title">Havro</span>
+        </div>
+        <div class="messages">
+          <div class="msg msg-havro">
+            I hear you. That's a heavy thing to carry alone. I'll hold this with you — and I'll remember it.
+            <span class="msg-time">9:14 PM</span>
+          </div>
+          <div class="msg msg-user">
+            I feel like I'm failing at everything I promised myself this year.
+            <span class="msg-time">9:16 PM</span>
+          </div>
+          <div class="msg msg-havro">
+            Three months ago you told me you were afraid of being someone who only talks about changing. What does it feel like right now, being this honest?
+            <span class="msg-time">9:16 PM</span>
+          </div>
+        </div>
+        <div class="input-bar">
+          <div class="input-field">Say something...</div>
+          <button class="send-btn">➤</button>
+        </div>
+        <div class="tab-bar">
+          <div class="tab-item active"><div class="tab-icon">🌙</div><div class="tab-text">Talk</div></div>
+          <div class="tab-item"><div class="tab-icon">🗺</div><div class="tab-text">Journey</div></div>
+          <div class="tab-item"><div class="tab-icon">✓</div><div class="tab-text">Promises</div></div>
+          <div class="tab-item"><div class="tab-icon">☀</div><div class="tab-text">Reflect</div></div>
+          <div class="tab-item"><div class="tab-icon">⚙</div><div class="tab-text">Settings</div></div>
+        </div>
+      </div>
+      <div class="screen-desc">
+        <p class="screen-desc-title">The core</p>
+        <p class="screen-desc-body">Havro references what you said three months ago — naturally, without announcing it. Ink ripples pulse behind every message.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Row 2: Journey + Promises -->
+  <div class="phone-row">
+
+    <div class="phone-wrap">
+      <span class="phone-label">Journey</span>
+      <div class="phone">
+        <div class="journey-header">
+          <div class="screen-h1">Your Journey</div>
+          <div class="screen-sub">4 memories</div>
+          <div class="filter-row">
+            <div class="filter-chip active">All</div>
+            <div class="filter-chip">Promises</div>
+            <div class="filter-chip">Fears</div>
+            <div class="filter-chip">Goals</div>
+          </div>
+        </div>
+        <div class="memory-list">
+          <div class="memory-card">
+            <div class="mc-header"><div class="mc-badge">PROMISE</div><div class="mc-dot"></div></div>
+            <div class="mc-text">I will never take another loan without telling my family first.</div>
+            <div class="mc-date">May 3, 2025</div>
+          </div>
+          <div class="memory-card">
+            <div class="mc-header"><div class="mc-badge fear">FEAR</div><div class="mc-dot scared"></div></div>
+            <div class="mc-text">I'm scared I'll reach 40 still doing work that doesn't mean anything.</div>
+            <div class="mc-date">March 18, 2025</div>
+          </div>
+          <div class="memory-card">
+            <div class="mc-header"><div class="mc-badge goal">GOAL</div><div class="mc-dot" style="background:var(--sage)"></div></div>
+            <div class="mc-text">Move to a city where I don't have to explain myself to anyone.</div>
+            <div class="mc-date">January 9, 2025</div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab-item"><div class="tab-icon">🌙</div><div class="tab-text">Talk</div></div>
+          <div class="tab-item active"><div class="tab-icon">🗺</div><div class="tab-text">Journey</div></div>
+          <div class="tab-item"><div class="tab-icon">✓</div><div class="tab-text">Promises</div></div>
+          <div class="tab-item"><div class="tab-icon">☀</div><div class="tab-text">Reflect</div></div>
+          <div class="tab-item"><div class="tab-icon">⚙</div><div class="tab-text">Settings</div></div>
+        </div>
+      </div>
+      <div class="screen-desc">
+        <p class="screen-desc-title">Your story</p>
+        <p class="screen-desc-body">Every fear, promise, and goal logged with type and emotion. Your timeline grows with you.</p>
+      </div>
+    </div>
+
+    <div class="phone-wrap">
+      <span class="phone-label">Promises</span>
+      <div class="phone">
+        <div class="promises-header">
+          <div class="screen-h1">Promises</div>
+          <div class="stats-row">
+            <div class="stat"><div class="stat-num">3</div><div class="stat-label">made</div></div>
+            <div class="stat-div"></div>
+            <div class="stat"><div class="stat-num sage">1</div><div class="stat-label">kept</div></div>
+            <div class="stat-div"></div>
+            <div class="stat"><div class="stat-num dim">2</div><div class="stat-label">active</div></div>
+          </div>
+        </div>
+        <div class="promise-list">
+          <div class="promise-card">
+            <div class="pc-top"><div class="pc-status">ACTIVE</div><div class="pc-days">47d ago</div></div>
+            <div class="pc-text">I will never take another loan without telling my family first.</div>
+            <div class="pc-date">Made on May 3, 2025</div>
+            <div class="pc-btns">
+              <button class="pc-btn">Kept it</button>
+              <button class="pc-btn abandon">Let go</button>
+            </div>
+          </div>
+          <div class="promise-card">
+            <div class="pc-top"><div class="pc-status kept">KEPT</div><div class="pc-days">112d ago</div></div>
+            <div class="pc-text">I will call my mother every Sunday, no exceptions.</div>
+            <div class="pc-date">Made on February 28, 2025</div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab-item"><div class="tab-icon">🌙</div><div class="tab-text">Talk</div></div>
+          <div class="tab-item"><div class="tab-icon">🗺</div><div class="tab-text">Journey</div></div>
+          <div class="tab-item active"><div class="tab-icon">✓</div><div class="tab-text">Promises</div></div>
+          <div class="tab-item"><div class="tab-icon">☀</div><div class="tab-text">Reflect</div></div>
+          <div class="tab-item"><div class="tab-icon">⚙</div><div class="tab-text">Settings</div></div>
+        </div>
+      </div>
+      <div class="screen-desc">
+        <p class="screen-desc-title">Accountability</p>
+        <p class="screen-desc-body">Swipe right to mark kept. Swipe left to let go. No shame either way — just honesty.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Row 3: Reflection + Settings -->
+  <div class="phone-row">
+
+    <div class="phone-wrap">
+      <span class="phone-label">Reflection</span>
+      <div class="phone">
+        <div class="reflection-header">
+          <div class="reflection-period">Weekly · June 16–22</div>
+          <div class="screen-h1">Reflection</div>
+          <div class="screen-sub">What Havro noticed this week</div>
+        </div>
+        <div class="reflection-list">
+          <div class="reflection-card insight">
+            <div class="reflection-card-label">Havro noticed</div>
+            <div class="reflection-text">You said <em>"invisible"</em> three times this week. You used that same word in January. What's changed — and what hasn't?</div>
+          </div>
+          <div class="reflection-card">
+            <div class="reflection-card-label">Milestone</div>
+            <div class="milestone-row">
+              <div class="milestone-num">62</div>
+              <div>
+                <div class="milestone-label">days calling your mother every Sunday</div>
+                <div class="milestone-sub">Promise made Feb 28, 2025 · still kept</div>
+              </div>
+            </div>
+          </div>
+          <div class="reflection-card">
+            <div class="reflection-card-label">Mood this week</div>
+            <div class="mood-row">
+              <div class="mood-bar" style="height:40%"></div>
+              <div class="mood-bar med" style="height:60%"></div>
+              <div class="mood-bar" style="height:30%"></div>
+              <div class="mood-bar high" style="height:75%"></div>
+              <div class="mood-bar med" style="height:55%"></div>
+              <div class="mood-bar" style="height:20%"></div>
+              <div class="mood-bar high" style="height:80%"></div>
+            </div>
+            <div class="mood-days">
+              <div class="mood-day">M</div><div class="mood-day">T</div><div class="mood-day">W</div>
+              <div class="mood-day">T</div><div class="mood-day">F</div><div class="mood-day">S</div><div class="mood-day">S</div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab-item"><div class="tab-icon">🌙</div><div class="tab-text">Talk</div></div>
+          <div class="tab-item"><div class="tab-icon">🗺</div><div class="tab-text">Journey</div></div>
+          <div class="tab-item"><div class="tab-icon">✓</div><div class="tab-text">Promises</div></div>
+          <div class="tab-item active"><div class="tab-icon">☀</div><div class="tab-text">Reflect</div></div>
+          <div class="tab-item"><div class="tab-icon">⚙</div><div class="tab-text">Settings</div></div>
+        </div>
+      </div>
+      <div class="screen-desc">
+        <p class="screen-desc-title">Weekly insight</p>
+        <p class="screen-desc-body">Havro surfaces patterns you didn't notice. Words you repeated. Promises you kept longer than you thought.</p>
+      </div>
+    </div>
+
+    <div class="phone-wrap">
+      <span class="phone-label">Settings</span>
+      <div class="phone">
+        <div class="settings-header">
+          <div class="screen-h1">Settings</div>
+          <div class="screen-sub">Havro stays on your device</div>
+        </div>
+        <div class="settings-list">
+          <div class="settings-section-label">AI Connection</div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Anthropic API Key</div>
+              <div class="api-key-display">sk-ant-••••••••••1f4a</div>
+            </div>
+            <div class="chevron">›</div>
+          </div>
+          <div class="settings-section-label">Reminders</div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Daily check-in</div>
+              <div class="settings-row-sub">9:00 PM · every day</div>
+            </div>
+            <div class="toggle"></div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Weekly reflection</div>
+              <div class="settings-row-sub">Sunday mornings</div>
+            </div>
+            <div class="toggle"></div>
+          </div>
+          <div class="settings-row">
+            <div class="settings-row-info">
+              <div class="settings-row-label">Promise nudges</div>
+              <div class="settings-row-sub">When you go quiet for 3+ days</div>
+            </div>
+            <div class="toggle off"></div>
+          </div>
+          <div class="settings-section-label">Your Data</div>
+          <div class="settings-row">
+            <div class="settings-row-info"><div class="settings-row-label">Export memories</div></div>
+            <div class="chevron">›</div>
+          </div>
+          <div class="settings-row danger">
+            <div class="settings-row-info"><div class="settings-row-label">Clear all data</div></div>
+            <div class="chevron" style="color:var(--mauve)">›</div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab-item"><div class="tab-icon">🌙</div><div class="tab-text">Talk</div></div>
+          <div class="tab-item"><div class="tab-icon">🗺</div><div class="tab-text">Journey</div></div>
+          <div class="tab-item"><div class="tab-icon">✓</div><div class="tab-text">Promises</div></div>
+          <div class="tab-item"><div class="tab-icon">☀</div><div class="tab-text">Reflect</div></div>
+          <div class="tab-item active"><div class="tab-icon">⚙</div><div class="tab-text">Settings</div></div>
+        </div>
+      </div>
+      <div class="screen-desc">
+        <p class="screen-desc-title">Fully private</p>
+        <p class="screen-desc-body">No analytics. No tracking. Your story stays on your device. You own it completely.</p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Bottom CTA -->
+<div class="bottom-cta">
+  <h2 class="cta-title">Ready when you are.</h2>
+  <p class="cta-sub">Join the waitlist. No spam. Just a quiet message when Havro is ready.</p>
+  <form class="cta-form" onsubmit="submitForm(event)">
+    <input type="email" id="cta-email" class="cta-input" placeholder="your@email.com" required />
+    <button type="submit" class="cta-btn">Join Waitlist</button>
+  </form>
+  <div class="cta-success" id="cta-success">You're on the list. Havro will remember. 🌙</div>
+  <p class="cta-note">Or go back to <a href="/" style="color:var(--accent)">havro.app</a></p>
+</div>
+
+<footer>
+  <span>© 2026 Havro</span>
+  <a href="mailto:hello@havro.app">hello@havro.app</a>
+</footer>
+
+<script>
+function submitForm(e) {
+  e.preventDefault();
+  document.querySelector('.cta-form').style.display = 'none';
+  document.getElementById('cta-success').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
